@@ -95,34 +95,36 @@ Before starting, ensure you have:
 **⚠️ IMPORTANT**: Attach the required permissions to your Lambda's IAM role:
 
 1. Find your Lambda's **Execution role** in the console
-2. Attach these policies:
+3. Attach these policies:
    - **`AmazonBedrockFullAccess`** (for Bedrock API calls)
    - **`AmazonS3FullAccess`** (for S3 put/get objects)
 3. Or create a custom policy with:
    ```json
    {
-       "Version": "2012-10-17",
-       "Statement": [
-           {
-               "Effect": "Allow",
-               "Action": [
-                   "bedrock:InvokeModel",
-                   "bedrock:GetModel"
-               ],
-               "Resource": "arn:aws:bedrock:*:*:foundation-model/*"
-           },
-           {
-               "Effect": "Allow",
-               "Action": [
-                   "s3:PutObject",
-                   "s3:GetObject",
-                   "s3:ListBucket"
-               ],
-               "Resource": "arn:aws:s3:::your-bucket-name/*"
-           }
-       ]
+      "Version": "2012-10-17",
+      "Statement": [
+         {
+            "Effect": "Allow",
+            "Action": [
+               "bedrock:InvokeModel",
+               "bedrock:GetModel"
+            ],
+            "Resource": "arn:aws:bedrock:*:*:foundation-model/*"
+         },
+         {
+            "Effect": "Allow",
+            "Action": [
+               "s3:PutObject",
+               "s3:GetObject",
+               "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::your-bucket-name/*"
+         }
+      ]
    }
    ```
+
+**WARNING (Testing only - IAM):** Do NOT attach broad managed policies like `AmazonS3FullAccess` or `AmazonBedrockFullAccess` in production. Use least-privilege IAM roles and scoped policies (RBAC) that grant only the specific actions on required resources. Consider creating custom policies and role separation for production environments.
 
 ✅ After attaching permissions, test:
 
@@ -183,6 +185,8 @@ Before starting, ensure you have:
 <div align="center">
 <img src="src/images/use_postman_to_test_api.png" alt="Test API with Postman" width="800">
 </div>
+
+**WARNING (Testing only - API exposure):** Public API endpoints used for testing must not be left open in production. Protect production endpoints with authentication (API keys, JWT/OAuth), IP allowlists, WAF rules, or private integrations (VPC Link / Private API). Do not rely on an unauthenticated public Invoke URL for production workloads.
 
 ---
 
